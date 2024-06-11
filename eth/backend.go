@@ -309,12 +309,16 @@ func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
 	}
 
 	if config.RollupSequencerHTTP != "" {
+		log.Info("Rollup sequencer RPC service enabled", "url", config.RollupSequencerHTTP)
+		log.Info("Creating sequencer client")
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		client, err := rpc.DialContext(ctx, config.RollupSequencerHTTP)
 		cancel()
 		if err != nil {
+			log.Info("Error creating client", "err", err)
 			return nil, err
 		}
+		log.Info("Created sequencer client with success")
 		eth.seqRPCService = client
 	}
 

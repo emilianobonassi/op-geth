@@ -296,14 +296,20 @@ func (b *EthAPIBackend) SendTx(ctx context.Context, signedTx *types.Transaction)
 	if b.ChainConfig().IsOptimism() && signedTx.Type() == types.BlobTxType {
 		return types.ErrTxTypeNotSupported
 	}
+	log.Info("SendTx", "tx", signedTx.Hash().Hex())
 	if b.eth.seqRPCService != nil {
+		log.Info("UnmarshallingTx", "tx", signedTx.Hash().Hex())
 		data, err := signedTx.MarshalBinary()
 		if err != nil {
+			log.Info("Error unmarshalling", "err", err)
 			return err
 		}
+		log.Info("Trying send tx via sequencer", "tx", signedTx.Hash().Hex())
 		if err := b.eth.seqRPCService.CallContext(ctx, nil, "eth_sendRawTransaction", hexutil.Encode(data)); err != nil {
+			log.Info("Error sending tx via sequencer", "err", err)
 			return err
 		}
+		log.Info("Successfully sent tx via sequencer", "tx", signedTx.Hash().Hex())
 		if b.disableTxPool {
 			return nil
 		}

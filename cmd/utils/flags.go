@@ -1855,6 +1855,7 @@ func SetEthConfig(ctx *cli.Context, stack *node.Node, cfg *ethconfig.Config) {
 	// Only configure sequencer http flag if we're running in verifier mode i.e. --mine is disabled.
 	if ctx.IsSet(RollupSequencerHTTPFlag.Name) && !ctx.IsSet(MiningEnabledFlag.Name) {
 		cfg.RollupSequencerHTTP = ctx.String(RollupSequencerHTTPFlag.Name)
+		log.Info("Rollup sequencer HTTP endpoint configured", "endpoint", cfg.RollupSequencerHTTP)
 	}
 	if ctx.IsSet(RollupHistoricalRPCFlag.Name) {
 		cfg.RollupHistoricalRPC = ctx.String(RollupHistoricalRPCFlag.Name)
